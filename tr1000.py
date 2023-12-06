@@ -299,27 +299,6 @@ for i in range(1, episodes+1):
 # print(wins)
 print(winrate[-1])
 print(lossrate[-1])
-# Create a plot
-# plt.plot(timesByimposter,a)
-
-# # Add labels and title
-# plt.xlabel('X-axis')
-# plt.ylabel('Y-axis')
-# plt.title('Imposter')
-
-# # Show the plot
-# plt.show()
-
-# # Create a plot
-# plt.plot(timesbyplayer,a)
-
-# # Add labels and title
-# plt.xlabel('X-axis')
-# plt.ylabel('Y-axis')
-# plt.title('Player')
-
-# # Show the plot
-# plt.show()
 
 np.save('player1000.npy', Q_table)
 np.save('imposter1000.npy', Q_table_imp)

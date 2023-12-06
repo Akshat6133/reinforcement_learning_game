@@ -1,132 +1,26 @@
 import pygame
-# import random
 import sys
 import time
 import numpy as np
+import matplotlib.pyplot as plt
 from os import getcwd
-
-
-episodes = 100000
-##Current Working Directory
-presworkdir = getcwd()
-# win = []
-# Initialize Pygame
+# import json
+from player import Player
+from  gameData.config import *
+from gameData.gameData import *
+pwdir = getcwd()
 pygame.init()
 
-
-## Constants
-WIDTH, HEIGHT = 1200, 800
-PLAYER_SPEED = 10
-IMPOSTER_SPEED = 12
-
 ##Game Over Flag 
-game_over = False
-
-##Starting frames
-frame = 0
-frame_imp = 0
-right = True
-right_imp = True
-at_reward = False
-
-##Q-Learning Parameters
-Q_table = np.zeros((WIDTH, HEIGHT, 4))  
-Q_table_imp = np.zeros((WIDTH, HEIGHT, 4))
-# Q-table for x, y, and actions (0: left, 1: right, 2: up, 3: down)
-epsilon = 0.1
-learning_rate = 0.9
-discount_factor = 0.95
-
-##Sprite of gunner
-spritesheet = pygame.image.load('Media/Graphics/white.png')
-
-character = pygame.image.load('Media/Graphics/white.png')
-character = pygame.transform.scale(character, (40,40))
-standright = character
-
-character = pygame.image.load('Media/Graphics/white.png')
-character = pygame.transform.scale(character, (40,40))
-blinkright = character
-
-standloopright2 = [standright, blinkright]
-standloopleft2 = [pygame.transform.flip(standright, True, False),
-				  pygame.transform.flip(blinkright, True, False)]
-
-character = pygame.image.load('Media/Graphics/wr1.png')
-character = pygame.transform.scale(character, (40,40))
-stepright = character
-
-character = pygame.image.load('Media/Graphics/wr2.png')
-character = pygame.transform.scale(character, (40,40))
-runright1 = character
-
-character = pygame.image.load('Media/Graphics/wr3.png')
-character = pygame.transform.scale(character, (40,40))
-runright2 = character
-
-character = pygame.image.load('Media/Graphics/wr4.png')
-character = pygame.transform.scale(character, (40,40))
-runright3 = character
-
-character = pygame.image.load('Media/Graphics/wr5.png')
-character = pygame.transform.scale(character, (40,40))
-runright4 = character
-
-
-walkloopright2 = [
-    standright,
-	stepright,
-	runright1,
-	runright2,
-	runright3,
-	runright4
-	]
-
-walkloopleft2 = [
-	pygame.transform.flip(walkloopright2[0], True, False),
-	pygame.transform.flip(walkloopright2[1], True, False),
-	pygame.transform.flip(walkloopright2[2], True, False),
-	pygame.transform.flip(walkloopright2[3], True, False),
-	pygame.transform.flip(walkloopright2[4], True, False),
-    pygame.transform.flip(walkloopright2[5], True, False),
-	]
-
-
-##Player Class
-class Player:
-    def __init__(self, x, y,image, Q_table):
-        self.x = x
-        self.y = y
-        self.image = pygame.transform.scale(pygame.image.load(image)  , (40,40))
-        self.rect = self.image.get_rect()
-        self.rect.width = 40
-        self.rect.height = 40
-        self.Q = Q_table
-        self.dead = False
-    def draw(self):
-        screen.blit(self.image, (self.x - self.rect.width // 2, self.y - self.rect.height // 2))
-    def choose_action(self):
-       
-        if np.random.rand() < epsilon:
-            
-            return  np.random.choice([0,1,2,3])
-        else:
-            # Exploitation: choose the action with the highest Q-value
-            return np.argmax(self.Q[self.x, self.y, :])
-            
-    
-    def update_q_table(self, action, prize, next_x, next_y):
-        # Q-learning update rule
-        current_q_value = self.Q[self.x, self.y, action]
-        max_next_q_value = np.max(self.Q[next_x, next_y, :])
-        new_q_value = current_q_value + learning_rate * (prize + discount_factor * max_next_q_value - current_q_value)
-        self.Q[self.x, self.y, action] = new_q_value
+game_over = False 
 
 def draw_reward():
     pygame.draw.circle(screen, (255,0,0), (100,700), 20 )
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Among Us")
 
+
+# data collection
 timesByimposter = []
 timesbyplayer = []
 time_taken_list = []
@@ -134,10 +28,18 @@ count_win = 0
 wins = []
 winrate = []
 lossrate = []
-for i in range(1,episodes+1):
-    time_init = time.time() #start timestamping
+ep_rewards_p = []
+ep_rewards_i = []
 
-    player_image_path = f'{presworkdir}/Media//Graphics/white.png'
+
+# def gamefxn():
+for i in range(1,episodes+1):
+
+    time_init = time.time() #start timestamping
+    
+    print(i)
+    
+    player_image_path = f'{pwdir}/Media//Graphics/white.png'
     player = Player(WIDTH//2, HEIGHT//2, player_image_path,Q_table)
     imposter = Player(1000,700, player_image_path,Q_table_imp)
     # Fonts
@@ -148,6 +50,7 @@ for i in range(1,episodes+1):
     prev_action_imp = 0
     start_time = time.time()
     game_over = False
+    ep_reward = {'player':0,'imposter':0}
     while not game_over:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -162,7 +65,7 @@ for i in range(1,episodes+1):
         prev_reward = player.Q[player.x, player.y, prev_action]
 
         if player.dead:
-            player.image = pygame.transform.scale(pygame.image.load(f'{presworkdir}/Media//Graphics/gone.png'), (40,40))
+            player.image = pygame.transform.scale(pygame.image.load(f'{pwdir}/Media//Graphics/gone.png'), (40,40))
         else:
             if player_action == 0 and player.x - PLAYER_SPEED > 0:
                 player.x -= PLAYER_SPEED
@@ -193,7 +96,7 @@ for i in range(1,episodes+1):
         if distance_reward < distance_prev_reward:
             prize = prev_reward + 10
         else:
-            prize = prev_reward - 10
+            prize = prev_reward - 20
 
         player.update_q_table(player_action, prize, player.x, player.y)
         if (((player.x - 100)**2)+((player.y-700)**2))**0.5 <= 20:
@@ -210,7 +113,7 @@ for i in range(1,episodes+1):
         prev_reward_imp = imposter.Q[imposter.x, imposter.y, prev_action_imp]
 
         if imposter.dead:
-            imposter.image = pygame.transform.scale(pygame.image.load(f'{presworkdir}/Media//Graphics/gone.png'), (40,40))
+            imposter.image = pygame.transform.scale(pygame.image.load(f'{pwdir}/Media//Graphics/gone.png'), (40,40))
         else:
             if imposter_action == 0 and imposter.x - IMPOSTER_SPEED > 0:
                 imposter.x -= IMPOSTER_SPEED
@@ -240,7 +143,7 @@ for i in range(1,episodes+1):
         if distance_reward_imp < distance_prev_reward_imp:
             prize_imp = prev_reward_imp + 10
         else:
-            prize_imp = prev_reward_imp - 10
+            prize_imp = prev_reward_imp - 20
 
         imposter.update_q_table(imposter_action, prize_imp, imposter.x, imposter.y)
         if (((player.x - imposter.x)**2)+((player.y-imposter.y)**2))**0.5 <= 20:
@@ -250,15 +153,17 @@ for i in range(1,episodes+1):
             Q_table_imp = imposter.Q
             timesByimposter.append(time.time() - start_time)
 
-        
+        ep_reward['player']+=distance_reward_imp
+        ep_reward['imposter']+=distance_prev_reward_imp
 
-        # Draw background
+        #-------------------------------------------------------------------------------------------------------------------- Draw background
+
+
         background_image_path = "background_image.png"  # replace with the actual path
         background = pygame.image.load(background_image_path)
         background = pygame.transform.scale(background, (WIDTH, HEIGHT))
         screen.blit(background, (0, 0))
-        # winrate.append(count_win/i)
-        # lossrate.append((i-count_win)/i)
+
         player.draw()
         imposter.draw()
         draw_reward()
@@ -269,13 +174,13 @@ for i in range(1,episodes+1):
     time_taken = time_end - time_init
     time_taken_list.append(time_taken)
 
-
-
+    # print(time_taken)
     
-import matplotlib.pyplot as plt
+    ep_rewards_p.append(ep_reward['player'])
+    ep_rewards_i.append(ep_reward['imposter'])
 
 
-# a = list(range(1,(episodes)+1))
+# data visualization
 a = list(range(1,episodes+1))
 num_0 = 0
 sm = 0
@@ -286,33 +191,12 @@ for i in range(1, episodes+1):
     winrate.append(sm/i)
     lossrate.append(num_0/i)
 
-print(wins)
-print(winrate)
-print(lossrate)
-# Create a plot
-# plt.plot(timesByimposter,a)
+# print(wins)
+print(winrate[-1])
+print(lossrate[-1])
 
-# # Add labels and title
-# plt.xlabel('X-axis')
-# plt.ylabel('Y-axis')
-# plt.title('Imposter')
-
-# # Show the plot
-# plt.show()
-
-# # Create a plot
-# plt.plot(timesbyplayer,a)
-
-# # Add labels and title
-# plt.xlabel('X-axis')
-# plt.ylabel('Y-axis')
-# plt.title('Player')
-
-# # Show the plot
-# plt.show()
-
-np.save('player.npy', Q_table)
-np.save('imposter.npy', Q_table_imp)
+np.save('player1000.npy', Q_table)
+np.save('imposter1000.npy', Q_table_imp)
 
 plt.plot(a,winrate)
 
@@ -322,6 +206,7 @@ plt.ylabel('player win rate')
 plt.title('player')
 
 # Show the plot
+plt.savefig(f"{pwdir}/figures1000/player.png")
 plt.show()
 
 # Create a plot)
@@ -333,6 +218,7 @@ plt.ylabel('imposter win rate')
 plt.title('Imposter')
 
 # Show the plot
+plt.savefig(f"{pwdir}/figures1000/Imposter.png")
 plt.show()
 
 plt.plot(a,time_taken_list)
@@ -340,8 +226,33 @@ plt.plot(a,time_taken_list)
 # Add labels and title
 plt.xlabel('episodes')
 plt.ylabel('time')
-plt.title('time taken')
+plt.title('time-taken')
 
 # Show the plot
+plt.savefig(f"{pwdir}/figures1000/time-taken.png")
+plt.show()
+
+plt.plot(list(range(len(ep_rewards_p))),ep_rewards_p)
+
+# Add labels and title
+plt.xlabel('episodes')
+plt.ylabel('reward')
+plt.title('player-reward')
+
+# Show the plot
+plt.savefig(f"{pwdir}/figures1000/player-reward.png")
+plt.show()
+
+
+plt.plot(list(range(len(ep_rewards_i))),ep_rewards_i)
+
+# Add labels and title
+
+plt.xlabel('episodes')
+plt.ylabel('reward')
+plt.title('imposter-reward')
+
+# Show the plot
+plt.savefig(f"{pwdir}/figures1000/imposter_reward.png")
 plt.show()
 
