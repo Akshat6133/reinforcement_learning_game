@@ -8,3 +8,9 @@ player class file      --testing pending
 main game file         --pending
 training file          --pending
 data collection file   --pending 
+
+player class --done
+config file --done
+game data --done
+requirements.txt --done
+moved previous training data collectedData for better organisation
