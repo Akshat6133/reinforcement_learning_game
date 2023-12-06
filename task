@@ -1,16 +1,15 @@
+file path debugging    --pending
+imposter color change  --pending
+
+player class file      --testing pending  
+main game file         --testing pending
+training file          --pending
+data collection file   --pending 
+
+
+
 make feature file     -- done
 
 config files :
     gamedata           --done
     settings config    --done
-
-player class file      --testing pending  
-main game file         --pending
-training file          --pending
-data collection file   --pending 
-
-player class --done
-config file --done
-game data --done
-requirements.txt --done
-moved previous training data collectedData for better organisation
