@@ -1,10 +1,15 @@
-file path debugging    --pending
-imposter color change  --pending
+debugging
+    |--file path debugging    --pending
+    |--imposter color change  --pending
 
-player class file      --testing pending  
-main game file         --testing pending
-training file          --pending
-data collection file   --pending 
+pending
+    player class file      --testing pending  
+    main game file         --testing pending
+    training file          --pending
+    data collection file   --pending 
+
+model training
+    |--changing discount_factor --pending
 
 
 
