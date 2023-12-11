@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from os import getcwd
 # import json
 from player import Player
-from  gameData.config import *
+from  config import *
 from gameData.gameData import *
 pwdir = getcwd()
 pygame.init()
@@ -195,64 +195,64 @@ for i in range(1, episodes+1):
 print(winrate[-1])
 print(lossrate[-1])
 
-np.save('player1000.npy', Q_table)
-np.save('imposter1000.npy', Q_table_imp)
+# np.save('player1000.npy', Q_table)
+# np.save('imposter1000.npy', Q_table_imp)
 
-plt.plot(a,winrate)
+# plt.plot(a,winrate)
 
-# Add labels and title
-plt.xlabel('episodes')
-plt.ylabel('player win rate')
-plt.title('player')
+# # Add labels and title
+# plt.xlabel('episodes')
+# plt.ylabel('player win rate')
+# plt.title('player')
 
-# Show the plot
-plt.savefig(f"{pwdir}/figures1000/player.png")
-plt.show()
+# # Show the plot
+# plt.savefig(f"{pwdir}/figures1000/player.png")
+# plt.show()
 
-# Create a plot)
-plt.plot(a,lossrate)
+# # Create a plot)
+# plt.plot(a,lossrate)
 
-# Add labels and title
-plt.xlabel('episodes')
-plt.ylabel('imposter win rate')
-plt.title('Imposter')
+# # Add labels and title
+# plt.xlabel('episodes')
+# plt.ylabel('imposter win rate')
+# plt.title('Imposter')
 
-# Show the plot
-plt.savefig(f"{pwdir}/figures1000/Imposter.png")
-plt.show()
+# # Show the plot
+# plt.savefig(f"{pwdir}/figures1000/Imposter.png")
+# plt.show()
 
-plt.plot(a,time_taken_list)
+# plt.plot(a,time_taken_list)
 
-# Add labels and title
-plt.xlabel('episodes')
-plt.ylabel('time')
-plt.title('time-taken')
+# # Add labels and title
+# plt.xlabel('episodes')
+# plt.ylabel('time')
+# plt.title('time-taken')
 
-# Show the plot
-plt.savefig(f"{pwdir}/figures1000/time-taken.png")
-plt.show()
+# # Show the plot
+# plt.savefig(f"{pwdir}/figures1000/time-taken.png")
+# plt.show()
 
-plt.plot(list(range(len(ep_rewards_p))),ep_rewards_p)
+# plt.plot(list(range(len(ep_rewards_p))),ep_rewards_p)
 
-# Add labels and title
-plt.xlabel('episodes')
-plt.ylabel('reward')
-plt.title('player-reward')
+# # Add labels and title
+# plt.xlabel('episodes')
+# plt.ylabel('reward')
+# plt.title('player-reward')
 
-# Show the plot
-plt.savefig(f"{pwdir}/figures1000/player-reward.png")
-plt.show()
+# # Show the plot
+# plt.savefig(f"{pwdir}/figures1000/player-reward.png")
+# plt.show()
 
 
-plt.plot(list(range(len(ep_rewards_i))),ep_rewards_i)
+# plt.plot(list(range(len(ep_rewards_i))),ep_rewards_i)
 
-# Add labels and title
+# # Add labels and title
 
-plt.xlabel('episodes')
-plt.ylabel('reward')
-plt.title('imposter-reward')
+# plt.xlabel('episodes')
+# plt.ylabel('reward')
+# plt.title('imposter-reward')
 
-# Show the plot
-plt.savefig(f"{pwdir}/figures1000/imposter_reward.png")
-plt.show()
+# # Show the plot
+# plt.savefig(f"{pwdir}/figures1000/imposter_reward.png")
+# plt.show()
 

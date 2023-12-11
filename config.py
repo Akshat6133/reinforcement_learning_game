@@ -1,4 +1,4 @@
-episodes = 1000
+episodes = 2
 
 epsilon = 0.1
 learning_rate = 0.9

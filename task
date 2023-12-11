@@ -13,8 +13,14 @@ model training
 
 
 
-make feature file     -- done
+
+
+to create q-learning.py
+make feature file     -- pending
 
 config files :
     gamedata           --done
     settings config    --done
+
+
+

@@ -1,5 +1,5 @@
 import pygame
-from gameData.config import *
+from config import *
 from gameData.gameData import *
 
 class Player:
